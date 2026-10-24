@@ -6,7 +6,7 @@ Dashboard Streamlit multi-pages construit sur le [Spotify Tracks Dataset](https:
 **Audience** : équipe A&R / marketing d'un label indépendant.
 
 - Cadrage : [cadrage.md](cadrage.md)
-- Dashboard en ligne : `https://<à-compléter>.streamlit.app`
+- Dashboard en ligne : [spotify-genre-hit.streamlit.app](https://spotify-genre-hit.streamlit.app/)
 
 ## Structure
 

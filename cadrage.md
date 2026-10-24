@@ -1,7 +1,7 @@
 # Document de cadrage : dashboard « Spotify : le genre fait le hit »
 
 **Dataset** : [Spotify Tracks Dataset](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) (Kaggle) : 114 000 titres, 114 genres × 1 000 titres, popularité 0–100 et 10 variables audio.
-**Déploiement** : `https://<à-compléter>.streamlit.app`
+**Déploiement** : [spotify-genre-hit.streamlit.app](https://spotify-genre-hit.streamlit.app/)
 
 ## 1. Message clé (sommet de la pyramide de Minto)
 
