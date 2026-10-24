@@ -11,11 +11,9 @@ Dashboard Streamlit multi-pages construit sur le [Spotify Tracks Dataset](https:
 ## Structure
 
 ```
-app.py               point d'entrée : navigation + filtres de la sidebar
-utils.py             chargement (@st.cache_data), filtres, calculs des KPIs
+app.py               point d'entrée : chargement (@st.cache_data), filtres, navigation
 pages/1_synthese.py  vue synthèse : titre-message, 3 KPIs, preuve principale
 pages/2_genres.py    vue détail : comparer les genres
-pages/3_son.py       vue détail : poids des variables audio
 data/dataset.csv     données brutes (Kaggle)
 ```
 
@@ -26,8 +24,6 @@ data/dataset.csv     données brutes (Kaggle)
 | Barres horizontales « variance expliquée » | Comparer des grandeurs, libellés longs lisibles. **Seule la barre Genre est en couleur d'accent**, tout le reste en gris : l'œil va au message (canal pré-attentif). |
 | Barres de taux de hit + ligne « catalogue » | Classement immédiat ; la couleur distingue au-dessus / en dessous de la moyenne. |
 | Nuage potentiel (hits) vs risque (titres sans audience) | Deux critères de décision simultanés ; quadrants par les moyennes, cibles prioritaires en bleu. |
-| Barres « amplitude des leviers » | Compare en points de popularité l'effet du genre et de chaque variable audio, avec la même logique de couleur. |
-| Courbe par décile, axe Y fixé à 0–100 | Ne pas exagérer de petites variations : la quasi-platitude *est* le message. |
 | Tableaux (onglet dédié) | Accès aux valeurs exactes derrière les graphiques. |
 
 ## Préparation des données et limites

@@ -6,7 +6,7 @@
 
 > **Sur Spotify, c'est le genre, et non le son, qui fait la popularité d'un titre : le genre en explique 38 %, les 10 caractéristiques audio réunies seulement 6 %.**
 
-Arguments (pyramide de Minto) : ① le genre explique 6× plus que le son, et l'audio n'ajoute que +0,5 pt une fois le genre connu ; ② 11 genres sur 114 produisent 37 % des hits ; ③ le meilleur levier audio fait varier la popularité de 16 pts, contre 39 pts entre genres.
+Arguments (pyramide de Minto) : ① le genre explique 6× plus que le son, et l'audio n'ajoute que +0,5 pt une fois le genre connu ; ② 11 genres sur 114 produisent 37 % des hits ; ③ prise seule, aucune variable audio n'explique plus de 4 % de la popularité.
 
 ## 2. Audience cible
 
@@ -27,6 +27,5 @@ Pas de dimension temporelle dans le dataset : chaque KPI est contextualisé par 
 ## 4. Structure
 
 - **Filtres (sidebar, partagés par toutes les pages)** : genres, paroles explicites.
-- **Synthèse** : titre-message → **zone KPIs** (3 colonnes) → **zone détail** en onglets (*Genre vs son*, *Où sont les hits*, *Données*).
+- **Synthèse** : titre-message → **zone KPIs** (3 colonnes) → **zone détail** en onglets (*Genre vs son*, *Données*).
 - **Détail : genres** : onglets *Taux de hit par genre*, *Potentiel vs risque*, *Tableau*.
-- **Détail : le son** : onglets *Amplitude des leviers*, *Profil par variable*.
