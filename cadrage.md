@@ -26,7 +26,7 @@ Pas de dimension temporelle dans le dataset : chaque KPI est contextualisé par 
 
 ## 4. Structure
 
-- **Filtres (sidebar, partagés par toutes les pages)** : genres, paroles explicites, durée, seuil de hit.
+- **Filtres (sidebar, partagés par toutes les pages)** : genres, paroles explicites.
 - **Synthèse** : titre-message → **zone KPIs** (3 colonnes) → **zone détail** en onglets (*Genre vs son*, *Où sont les hits*, *Données*).
-- **Détail : genres** : onglets *Taux de hit par genre*, *Potentiel vs risque*, *Distribution*, *Tableau*.
-- **Détail : le son** : onglets *Amplitude des leviers*, *Profil par variable*, *Tableau*.
+- **Détail : genres** : onglets *Taux de hit par genre*, *Potentiel vs risque*, *Tableau*.
+- **Détail : le son** : onglets *Amplitude des leviers*, *Profil par variable*.

@@ -25,10 +25,10 @@ data/dataset.csv     données brutes (Kaggle)
 |---|---|
 | Barres horizontales « variance expliquée » | Comparer des grandeurs, libellés longs lisibles. **Seule la barre Genre est en couleur d'accent**, tout le reste en gris : l'œil va au message (canal pré-attentif). |
 | Barres de taux de hit + ligne « catalogue » | Classement immédiat ; la couleur distingue au-dessus / en dessous de la moyenne. |
-| Nuage potentiel (hits) vs risque (titres sans audience) | Deux critères de décision simultanés ; quadrants par les moyennes, libellés directs seulement sur les cibles prioritaires. |
-| Boîtes à moustaches | Montrent la dispersion : même un bon genre ne garantit pas le succès. |
+| Nuage potentiel (hits) vs risque (titres sans audience) | Deux critères de décision simultanés ; quadrants par les moyennes, cibles prioritaires en bleu. |
+| Barres « amplitude des leviers » | Compare en points de popularité l'effet du genre et de chaque variable audio, avec la même logique de couleur. |
 | Courbe par décile, axe Y fixé à 0–100 | Ne pas exagérer de petites variations : la quasi-platitude *est* le message. |
-| Tableaux (onglet dédié) | Équivalent accessible de chaque graphique et accès aux valeurs exactes. |
+| Tableaux (onglet dédié) | Accès aux valeurs exactes derrière les graphiques. |
 
 ## Préparation des données et limites
 

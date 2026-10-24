@@ -1,97 +1,55 @@
-"""Vue détail : mesurer ce que les caractéristiques audio changent vraiment."""
+"""Vue détail : ce que les variables audio changent vraiment à la popularité."""
 import pandas as pd
-import plotly.graph_objects as go
+import plotly.express as px
 import streamlit as st
 
-from utils import (
-    ACCENT, AUDIO_FEATURES, MUTED, decile_profile, genre_table, get_segment, style_fig,
-)
+from utils import ACCENT, AUDIO_FEATURES, GREY, filter_data, genre_stats, load_data
 
-df, seg, filters = get_segment()
+df = load_data()
+seg = filter_data(df)
 
-if len(seg) < 200:
-    st.title("Ce que le son change à la popularité")
-    st.warning("Moins de 200 titres correspondent aux filtres : élargissez la sélection.")
+st.title("Le son pèse beaucoup moins que le genre sur la popularité")
+st.write("Les budgets de production qui visent un « son qui marche » ont un rendement limité.")
+
+if len(seg) < 100:
+    st.warning("Trop peu de titres pour ces filtres : élargissez la sélection.")
     st.stop()
 
-# Amplitude de chaque levier, en points de popularité médiane :
-# écart entre le meilleur et le pire décile d'une variable audio,
-# comparé à l'écart entre genres (10e et 90e centiles des médianes, pour ignorer les extrêmes).
-gaps = []
-for col, label in AUDIO_FEATURES.items():
-    prof = decile_profile(seg, col)
-    gaps.append((label, prof["popularite_mediane"].max() - prof["popularite_mediane"].min()))
-gaps = pd.DataFrame(gaps, columns=["levier", "ecart"])
 
-genre_medians = genre_table(seg, filters["threshold"])["popularite_mediane"]
-genre_gap = genre_medians.quantile(0.9) - genre_medians.quantile(0.1) if len(genre_medians) >= 5 else None
-best_audio = gaps.loc[gaps["ecart"].idxmax()]
+def by_decile(feature):
+    """Popularité médiane pour chaque dixième des titres, du plus faible au plus élevé sur la variable."""
+    decile = pd.qcut(seg[feature].rank(method="first"), 10, labels=range(1, 11))
+    return seg.groupby(decile)["popularity"].median()
 
-if genre_gap and best_audio["ecart"] > 0:
-    st.title(f"Le genre pèse {genre_gap / best_audio['ecart']:.1f}× plus que le meilleur "
-             "levier audio sur la popularité".replace(".", ",", 1))
-else:
-    st.title(f"À genre fixé, le son ne fait varier la popularité que de "
-             f"{best_audio['ecart']:.0f} pts")
-if genre_gap:
-    st.markdown(
-        f"Le levier audio le plus fort (**{best_audio['levier'].lower()}**) fait varier la "
-        f"popularité médiane de **{best_audio['ecart']:.0f} pts** au maximum, "
-        f"contre **{genre_gap:.0f} pts** entre genres. Les budgets de production ciblant "
-        "un « son qui marche » ont un rendement limité."
-    )
-else:
-    st.markdown(
-        f"Dans la sélection, le levier audio le plus fort (**{best_audio['levier'].lower()}**) "
-        f"fait varier la popularité médiane de **{best_audio['ecart']:.0f} pts** au maximum."
-    )
 
-tab_gap, tab_curve, tab_data = st.tabs(["Amplitude des leviers", "Profil par variable", "Tableau"])
+tab1, tab2 = st.tabs(["Amplitude des leviers", "Profil par variable"])
 
-with tab_gap:
-    rows = gaps.copy()
-    if genre_gap:
-        rows = pd.concat([rows, pd.DataFrame([{"levier": "Genre (P10 → P90)", "ecart": genre_gap}])])
-    rows = rows.sort_values("ecart")
-    fig = go.Figure(go.Bar(
-        x=rows["ecart"], y=rows["levier"], orientation="h",
-        marker_color=[ACCENT if l.startswith("Genre") else MUTED for l in rows["levier"]],
-        text=[f"{v:.0f} pts" for v in rows["ecart"]], textposition="outside",
-        hovertemplate="%{y} : %{x:.0f} pts d'écart de popularité médiane<extra></extra>",
-    ))
-    fig.update_xaxes(title="Écart de popularité médiane (points)",
-                     range=[0, rows["ecart"].max() * 1.15])
-    st.subheader("Écart de popularité obtenu en jouant sur chaque levier")
-    st.plotly_chart(style_fig(fig, 460), width="stretch")
-    st.caption("Variables audio : écart entre le meilleur et le pire décile. "
-               "Genre : écart entre un genre du 90e centile et un genre du 10e centile.")
+with tab1:
+    st.subheader("Écart de popularité médiane obtenu en jouant sur chaque levier")
+    # Variable audio : écart entre le meilleur et le pire décile.
+    # Genre : écart entre un genre du 90e centile et un du 10e (on ignore les extrêmes).
+    gaps = {label: by_decile(col).max() - by_decile(col).min() for col, label in AUDIO_FEATURES.items()}
+    medians = genre_stats(seg)["popularite_mediane"]
+    gaps["Genre"] = medians.quantile(0.9) - medians.quantile(0.1)
 
-with tab_curve:
-    labels = {v: k for k, v in AUDIO_FEATURES.items()}
-    choice = st.selectbox("Variable audio", list(labels), index=0)
-    prof = decile_profile(seg, labels[choice])
-    fig = go.Figure(go.Scatter(
-        x=prof["decile"].astype(int), y=prof["popularite_mediane"], mode="lines+markers",
-        line=dict(color=ACCENT, width=2), marker=dict(size=8),
-        customdata=prof[["valeur_mediane"]],
-        hovertemplate="Décile %{x} (valeur médiane %{customdata[0]:.2f})"
-                      "<br>Popularité médiane : %{y:.0f}<extra></extra>",
-    ))
-    fig.add_hline(y=seg["popularity"].median(), line_width=1, line_color="gray",
-                  annotation_text="Médiane du segment", annotation_position="bottom right")
-    # Échelle 0–100 fixe : la platitude de la courbe est le message
-    fig.update_yaxes(range=[0, 100], title="Popularité médiane")
-    fig.update_xaxes(dtick=1, title=f"Décile de « {choice} » (1 = plus faible, 10 = plus élevé)")
-    st.subheader(f"Popularité selon le niveau de « {choice} »")
-    st.plotly_chart(style_fig(fig, 420), width="stretch")
-    st.caption("Axe vertical fixé sur toute l'échelle de popularité (0–100) pour ne pas "
-               "exagérer visuellement de petites variations.")
+    levers = pd.DataFrame(gaps.items(), columns=["levier", "ecart"]).sort_values("ecart")
+    levers["couleur"] = levers["levier"].eq("Genre")
+    fig = px.bar(levers, x="ecart", y="levier", orientation="h", text_auto=".0f",
+                 color="couleur", color_discrete_map={True: ACCENT, False: GREY},
+                 labels={"ecart": "Écart de popularité médiane (points)", "levier": ""})
+    fig.update_layout(showlegend=False)
+    st.plotly_chart(fig)
+    st.caption("Sélectionnez au moins 5 genres pour que la barre « Genre » soit significative.")
 
-with tab_data:
-    st.dataframe(
-        gaps.sort_values("ecart", ascending=False), hide_index=True, width="stretch",
-        column_config={
-            "levier": "Variable audio",
-            "ecart": st.column_config.NumberColumn("Écart max entre déciles (pts)", format="%.1f"),
-        },
-    )
+with tab2:
+    label = st.selectbox("Variable audio", list(AUDIO_FEATURES.values()))
+    feature = next(col for col, name in AUDIO_FEATURES.items() if name == label)
+    profile = by_decile(feature).reset_index()
+    profile.columns = ["decile", "popularite_mediane"]
+    fig = px.line(profile, x="decile", y="popularite_mediane", markers=True,
+                  color_discrete_sequence=[ACCENT],
+                  labels={"decile": f"Décile de « {label} » (1 = plus faible, 10 = plus élevé)",
+                          "popularite_mediane": "Popularité médiane"})
+    # Axe fixé de 0 à 100 pour ne pas exagérer de petites variations
+    fig.update_yaxes(range=[0, 100])
+    st.plotly_chart(fig)
